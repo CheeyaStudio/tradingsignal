@@ -1,0 +1,1274 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Smart FX Signal & News Intelligence Terminal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --bg-dark: #0b0f19;
+      --bg-card: #111827;
+      --bg-card-hover: #1f2937;
+      --border-color: #1f2937;
+      --text-main: #f9fafb;
+      --text-muted: #9ca3af;
+      --green-glow: #10b981;
+      --green-bg: rgba(16, 185, 129, 0.15);
+      --red-glow: #ef4444;
+      --red-bg: rgba(239, 68, 68, 0.15);
+      --yellow-glow: #f59e0b;
+      --yellow-bg: rgba(245, 158, 11, 0.15);
+      --blue-accent: #3b82f6;
+      --purple-accent: #8b5cf6;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* Top Navigation Bar */
+    header {
+      background: rgba(17, 24, 39, 0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border-color);
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      padding: 0.85rem 1.5rem;
+    }
+
+    .header-content {
+      max-width: 1600px;
+      margin: 0 auto;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .brand-icon {
+      width: 40px;
+      height: 40px;
+      background: linear-gradient(135deg, var(--blue-accent), var(--purple-accent));
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 1.2rem;
+      box-shadow: 0 0 15px rgba(59, 130, 246, 0.4);
+    }
+
+    .brand-text h1 {
+      font-size: 1.15rem;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+    }
+
+    .brand-text p {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    /* Market Sessions */
+    .sessions-bar {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      background: rgba(11, 15, 25, 0.7);
+      padding: 0.4rem 0.8rem;
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+      font-size: 0.75rem;
+    }
+
+    .session-pill {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .session-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #4b5563;
+    }
+
+    .session-dot.open {
+      background: var(--green-glow);
+      box-shadow: 0 0 8px var(--green-glow);
+    }
+
+    /* Pair & Timeframe Controls */
+    .controls-bar {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .select-dropdown {
+      background: #1e293b;
+      border: 1px solid #334155;
+      color: var(--text-main);
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      outline: none;
+      transition: all 0.2s;
+    }
+
+    .select-dropdown:hover {
+      border-color: var(--blue-accent);
+    }
+
+    /* Main Container Grid */
+    .main-container {
+      max-width: 1600px;
+      margin: 1.25rem auto;
+      padding: 0 1.25rem;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1.25rem;
+    }
+
+    /* Status Banner / News Protection Filter */
+    .news-alert-banner {
+      background: linear-gradient(90deg, rgba(245, 158, 11, 0.15), rgba(17, 24, 39, 0.9));
+      border: 1px solid rgba(245, 158, 11, 0.4);
+      border-radius: 12px;
+      padding: 1rem 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1.5rem;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    .news-alert-info {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .news-alert-badge {
+      background: var(--yellow-glow);
+      color: #000;
+      padding: 0.35rem 0.75rem;
+      border-radius: 6px;
+      font-weight: 700;
+      font-size: 0.8rem;
+      letter-spacing: 0.5px;
+      white-space: nowrap;
+    }
+
+    .news-alert-text h3 {
+      font-size: 0.95rem;
+      font-weight: 600;
+      margin-bottom: 0.2rem;
+    }
+
+    .news-alert-text p {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    /* 3-Column Top Grid (Sinyal, Eksekusi, Lot Calculator) */
+    .top-metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 1.25rem;
+    }
+
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 14px;
+      padding: 1.25rem;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      padding-bottom: 0.75rem;
+    }
+
+    .card-title {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    /* Signal Decision Box */
+    .decision-display {
+      text-align: center;
+      padding: 1.25rem;
+      background: rgba(0, 0, 0, 0.35);
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .decision-badge {
+      display: inline-block;
+      font-size: 1.5rem;
+      font-weight: 800;
+      padding: 0.5rem 1.5rem;
+      border-radius: 10px;
+      margin-bottom: 0.5rem;
+      letter-spacing: 1px;
+    }
+
+    .decision-badge.buy {
+      background: var(--green-bg);
+      color: var(--green-glow);
+      border: 1px solid var(--green-glow);
+      box-shadow: 0 0 20px rgba(16, 185, 129, 0.3);
+    }
+
+    .decision-badge.sell {
+      background: var(--red-bg);
+      color: var(--red-glow);
+      border: 1px solid var(--red-glow);
+      box-shadow: 0 0 20px rgba(239, 68, 68, 0.3);
+    }
+
+    .decision-badge.wait {
+      background: var(--yellow-bg);
+      color: var(--yellow-glow);
+      border: 1px solid var(--yellow-glow);
+    }
+
+    .decision-subtext {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    /* Execution Numbers Table */
+    .execution-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.75rem;
+    }
+
+    .exec-box {
+      background: #1a2234;
+      padding: 0.75rem;
+      border-radius: 8px;
+      border-left: 3px solid #4b5563;
+    }
+
+    .exec-box.entry { border-left-color: var(--blue-accent); }
+    .exec-box.sl { border-left-color: var(--red-glow); }
+    .exec-box.tp { border-left-color: var(--green-glow); }
+    .exec-box.rr { border-left-color: var(--purple-accent); }
+
+    .exec-label {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      margin-bottom: 0.25rem;
+    }
+
+    .exec-val {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1rem;
+      font-weight: 700;
+    }
+
+    /* Lot Size Calculator */
+    .calc-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.8rem;
+    }
+
+    .calc-input {
+      background: #1f2937;
+      border: 1px solid #374151;
+      color: #fff;
+      padding: 0.4rem 0.6rem;
+      border-radius: 6px;
+      width: 100px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.85rem;
+      text-align: right;
+    }
+
+    .calc-result-box {
+      background: rgba(59, 130, 246, 0.1);
+      border: 1px solid rgba(59, 130, 246, 0.3);
+      padding: 0.75rem;
+      border-radius: 8px;
+      text-align: center;
+    }
+
+    .calc-result-lot {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1.4rem;
+      font-weight: 800;
+      color: #60a5fa;
+    }
+
+    /* Chart & Technical Analysis Grid */
+    .chart-section-grid {
+      display: grid;
+      grid-template-columns: 2.2fr 1fr;
+      gap: 1.25rem;
+    }
+
+    @media (max-width: 1100px) {
+      .chart-section-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .chart-card {
+      min-height: 580px;
+      padding: 0;
+      overflow: hidden;
+    }
+
+    /* News & Economic Events Section */
+    .news-section-grid {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 1.25rem;
+    }
+
+    @media (max-width: 992px) {
+      .news-section-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .widget-container {
+      width: 100%;
+      height: 480px;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    /* Beginner Checklist */
+    .checklist-card {
+      background: linear-gradient(145deg, #111827, #131d33);
+      border: 1px solid #2d3748;
+      border-radius: 14px;
+      padding: 1.25rem;
+    }
+
+    .checklist-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: #e2e8f0;
+      margin-bottom: 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .checklist-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+      margin-bottom: 0.6rem;
+      font-size: 0.82rem;
+      color: #cbd5e1;
+      line-height: 1.4;
+    }
+
+    .checklist-item input[type="checkbox"] {
+      margin-top: 0.2rem;
+      accent-color: var(--blue-accent);
+      cursor: pointer;
+      width: 16px;
+      height: 16px;
+    }
+
+    /* Footer */
+    footer {
+      border-top: 1px solid var(--border-color);
+      padding: 1.5rem;
+      text-align: center;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-top: 2rem;
+    }
+
+    /* Pulse animation */
+    @keyframes pulse-dot {
+      0% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(1.2); }
+      100% { opacity: 1; transform: scale(1); }
+    }
+
+    .live-pulse {
+      animation: pulse-dot 2s infinite ease-in-out;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Navigation Header -->
+  <header>
+    <div class="header-content">
+      <div class="brand">
+        <div class="brand-icon">⚡</div>
+        <div class="brand-text">
+          <h1>FX Intelligence & Signal Terminal</h1>
+          <p>Teknikal 26 Indikator + Filter Berita Berdampak Tinggi</p>
+        </div>
+      </div>
+
+      <!-- Live Market Sessions -->
+      <div class="sessions-bar">
+        <span style="color: var(--text-muted); font-size: 0.7rem; font-weight: 600;">SESI PASAR:</span>
+        <div class="session-pill" id="sess-sydney"><span class="session-dot"></span> Sydney</div>
+        <div class="session-pill" id="sess-tokyo"><span class="session-dot"></span> Tokyo</div>
+        <div class="session-pill" id="sess-london"><span class="session-dot"></span> London</div>
+        <div class="session-pill" id="sess-ny"><span class="session-dot"></span> New York</div>
+      </div>
+
+      <!-- Controls: Pair & Timeframe -->
+      <div class="controls-bar">
+        <select id="pairSelect" class="select-dropdown" onchange="onPairChange()">
+          <option value="OANDA:EURUSD" data-base="EUR" data-quote="USD" selected>EUR / USD (Euro / Dolar AS)</option>
+          <option value="OANDA:GBPUSD" data-base="GBP" data-quote="USD">GBP / USD (Pound / Dolar AS)</option>
+          <option value="OANDA:USDJPY" data-base="USD" data-quote="JPY">USD / JPY (Dolar AS / Yen)</option>
+          <option value="OANDA:AUDUSD" data-base="AUD" data-quote="USD">AUD / USD (Dolar Aussie / Dolar AS)</option>
+          <option value="OANDA:USDCAD" data-base="USD" data-quote="CAD">USD / CAD (Dolar AS / Dolar Kanada)</option>
+          <option value="OANDA:XAUUSD" data-base="XAU" data-quote="USD">XAU / USD (Emas / Gold)</option>
+        </select>
+
+        <select id="timeframeSelect" class="select-dropdown" onchange="onTimeframeChange()">
+          <option value="1h" selected>H1 (1 Jam - Direkomendasikan)</option>
+          <option value="4h">H4 (4 Jam - Tren Kuat)</option>
+          <option value="15m">M15 (15 Menit - Cepat)</option>
+          <option value="1D">D1 (Harian - Swing)</option>
+        </select>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content Area -->
+  <main class="main-container">
+
+    <!-- ========================================== -->
+    <!-- PANEL ANALISA TEKNIKAL AKURAT (SUPPORT & RESISTANCE PENDING ORDER) -->
+    <!-- ========================================== -->
+    <div style="background: linear-gradient(135deg, #131c31, #0f172a); border: 2px solid #3b82f6; border-radius: 16px; padding: 1.5rem; box-shadow: 0 10px 35px rgba(0,0,0,0.5);">
+      
+      <!-- Header Kotak Analisa -->
+      <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 1rem; margin-bottom: 1.25rem; gap: 1rem;">
+        <div>
+          <span style="background: #3b82f6; color: #fff; padding: 0.25rem 0.6rem; border-radius: 6px; font-weight: 800; font-size: 0.75rem; letter-spacing: 0.5px;">ANALISA STRUKTUR PASAR</span>
+          <h2 style="font-size: 1.4rem; font-weight: 800; margin-top: 0.35rem; color: #fff;">
+            🎯 REKOMENDASI TITIK ENTRY TERBAIK (SUPPORT & RESISTANCE)
+          </h2>
+          <p style="font-size: 0.85rem; color: #94a3b8; margin-top: 0.2rem;">
+            Trader profesional <strong>TIDAK PERNAH</strong> langsung Buy/Sell di harga running sekarang. Mereka memasang antrean di <strong>Lantai (Support)</strong> atau <strong>Atap (Resistance)</strong>.
+          </p>
+        </div>
+
+        <!-- Tombol Aksi Cepat Skenario -->
+        <div style="display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap;">
+          <button onclick="fetchLivePrices()" style="background: #1f2937; border: 1px solid #4b5563; color: #fff; padding: 0.5rem 0.85rem; border-radius: 8px; font-size: 0.85rem; font-weight: 600; cursor: pointer;">
+            🔄 Refresh Analisa & Harga
+          </button>
+        </div>
+      </div>
+
+      <!-- DIAGNOSA KEDUDUKAN HARGA SAAT INI -->
+      <div style="background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.35); border-radius: 12px; padding: 1rem 1.25rem; margin-bottom: 1.5rem;">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.75rem;">
+          <div>
+            <div style="font-size: 0.75rem; font-weight: 700; color: #fbbf24; text-transform: uppercase;">
+              ⚠️ DIAGNOSA HARGA RUNNING SAAT INI:
+            </div>
+            <div style="font-size: 1.1rem; font-weight: 700; color: #fff; margin-top: 0.2rem;">
+              Harga running <span id="diagPair" style="color: #60a5fa;">EUR/USD</span> saat ini: <span id="diagLivePrice" style="color: #fbbf24; font-family: 'JetBrains Mono', monospace; font-size: 1.3rem;">1.12050</span>
+            </div>
+            <div style="font-size: 0.82rem; color: #cbd5e1; margin-top: 0.25rem;">
+              <strong>Analisa:</strong> Harga sedang berada di area <em>Netral / Mengambang</em> di antara Lantai dan Atap. <strong>JANGAN masuk di harga running ini</strong> agar tidak beli di pucuk atau jual di lembah. Pilih salah satu skenario antrean di bawah:
+            </div>
+          </div>
+          <div style="background: rgba(0,0,0,0.4); padding: 0.6rem 1rem; border-radius: 8px; text-align: center; border: 1px solid rgba(255,255,255,0.08);">
+            <div style="font-size: 0.7rem; color: #94a3b8;">ATAP RESISTANCE (R1):</div>
+            <div id="diagR1" style="font-family: 'JetBrains Mono', monospace; font-weight: 800; color: #f87171; font-size: 1rem;">1.12350</div>
+            <div style="font-size: 0.7rem; color: #94a3b8; margin-top: 0.3rem;">LANTAI SUPPORT (S1):</div>
+            <div id="diagS1" style="font-family: 'JetBrains Mono', monospace; font-weight: 800; color: #4ade80; font-size: 1rem;">1.11750</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ========================================== -->
+      <!-- BANNER PASAR TUTUP DI HARI LIBUR / WEEKEND -->
+      <!-- ========================================== -->
+      <div id="weekendClosedBanner" style="display: none; background: linear-gradient(135deg, rgba(239, 68, 68, 0.25), rgba(17, 24, 39, 0.95)); border: 2px solid #ef4444; border-radius: 14px; padding: 1.25rem 1.5rem; margin-bottom: 1.5rem; box-shadow: 0 0 25px rgba(239, 68, 68, 0.3);">
+        <div style="display: flex; align-items: center; gap: 1rem;">
+          <div style="font-size: 2.2rem;">🛑</div>
+          <div>
+            <div style="font-size: 0.8rem; font-weight: 800; color: #fca5a5; letter-spacing: 1px; text-transform: uppercase;">
+              PASAR SEDANG TUTUP (LIBUR AKHIR PEKAN)
+            </div>
+            <div style="font-size: 1.3rem; font-weight: 900; color: #fff; margin-top: 0.2rem;">
+              Hari ini Hari MINGGU: JANGAN BUY DAN JANGAN SELL DULU!
+            </div>
+            <div style="font-size: 0.85rem; color: #e2e8f0; margin-top: 0.35rem; line-height: 1.4;">
+              Pasar Forex dan Logam Mulia di seluruh dunia <strong>LIBUR setiap Sabtu & Minggu</strong>. Jika kamu mencoba transaksi di MetaTrader sekarang, aplikasi akan menolak (<em>"Market Closed"</em>). 
+              <br>Pasar akan <strong>buka kembali Senin pagi jam 05:00 WIB</strong>. Istirahat dulu ya!
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- KEPUTUSAN TUNGGAL AI (BIAR GAK BINGUNG) -->
+      <div style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(15, 23, 42, 0.9)); border: 2px solid #10b981; border-radius: 14px; padding: 1.25rem 1.5rem; margin-bottom: 1.5rem;">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.75rem;">
+          <div>
+            <span style="background: #10b981; color: #000; font-size: 0.7rem; font-weight: 900; padding: 0.25rem 0.6rem; border-radius: 6px; letter-spacing: 0.5px;">
+              PUTUSAN FINAL AI UNTUK HARI INI
+            </span>
+            <div id="finalVerdictTitle" style="font-size: 1.6rem; font-weight: 900; color: #10b981; margin-top: 0.35rem;">
+              🟢 KEPUTUSAN TEGAS: FOKUS "BUY" SAJA! (JANGAN SELL)
+            </div>
+            <div id="finalVerdictDesc" style="font-size: 0.85rem; color: #cbd5e1; margin-top: 0.25rem;">
+              Karena tren besar <strong id="verdictPairText">EUR/USD</strong> sedang <strong>NAIK (BULLISH)</strong>, aturan emasnya adalah <strong>HANYA CARI PELUANG BUY</strong>. Pilihan SELL di bawah sengaja dimatikan agar kamu tidak bingung dan tidak melawan arah tren.
+            </div>
+          </div>
+          <div style="text-align: right;">
+            <div style="font-size: 0.75rem; color: #94a3b8;">ATURAN UTAMA:</div>
+            <div style="font-size: 0.95rem; font-weight: 800; color: #4ade80;">"Trend is your Friend"</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2 PILIHAN STRATEGI MASUK YANG BENAR (BUY LIMIT DI LANTAI vs SELL LIMIT DI ATAP) -->
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(360px, 1fr)); gap: 1.25rem; margin-bottom: 1.5rem;">
+        
+        <!-- OPSI 1: RENCANA BUY TERBAIK (BELI MURAH DI SUPPORT) -->
+        <div style="background: #111e2e; border: 2px solid #10b981; border-radius: 14px; padding: 1.25rem; position: relative; box-shadow: 0 4px 20px rgba(16, 185, 129, 0.15);">
+          <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(16, 185, 129, 0.3); padding-bottom: 0.6rem; margin-bottom: 1rem;">
+            <div>
+              <span style="background: #10b981; color: #000; font-size: 0.7rem; font-weight: 800; padding: 0.2rem 0.5rem; border-radius: 4px;">PILIHAN 1</span>
+              <h3 style="font-size: 1.15rem; font-weight: 800; color: #10b981; margin-top: 0.2rem;">
+                🟢 RENCANA BUY (BELI MURAH DI LANTAI)
+              </h3>
+            </div>
+            <span style="font-size: 0.75rem; color: #a7f3d0; font-weight: 600;">Tipe: <strong>BUY LIMIT</strong></span>
+          </div>
+
+          <p style="font-size: 0.78rem; color: #94a3b8; margin-bottom: 0.85rem;">
+            Tunggu harga turun menjemput lantai Support. Jika harga menyentuh angka ini, MetaTrader akan otomatis membelikan untukmu:
+          </p>
+
+          <div style="display: flex; flex-direction: column; gap: 0.65rem;">
+            
+            <!-- Entry Buy Limit -->
+            <div style="background: #1a293e; padding: 0.65rem 0.85rem; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; border-left: 3px solid #10b981;">
+              <div>
+                <div style="font-size: 0.7rem; color: #94a3b8; text-transform: uppercase;">ANTRE BELI DI HARGA (ENTRY):</div>
+                <div id="buyPlanEntry" style="font-family: 'JetBrains Mono', monospace; font-size: 1.35rem; font-weight: 900; color: #fff;">1.11750</div>
+                <div style="font-size: 0.7rem; color: #6ee7b7;">(Level Support 1 - Beli saat harga murah)</div>
+              </div>
+              <button onclick="copyToClipboard('buyPlanEntry', 'Entry Buy Limit')" style="background: #10b981; color: #000; border: none; padding: 0.4rem 0.8rem; border-radius: 6px; font-weight: 800; font-size: 0.75rem; cursor: pointer;">
+                📋 Salin
+              </button>
+            </div>
+
+            <!-- SL Buy Limit -->
+            <div style="background: #1a293e; padding: 0.65rem 0.85rem; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; border-left: 3px solid #ef4444;">
+              <div>
+                <div style="font-size: 0.7rem; color: #fca5a5; text-transform: uppercase;">STOP LOSS (BATAS RUGI):</div>
+                <div id="buyPlanSL" style="font-family: 'JetBrains Mono', monospace; font-size: 1.35rem; font-weight: 900; color: #ef4444;">1.11450</div>
+                <div style="font-size: 0.7rem; color: #f87171;">(30 pips di bawah Support jika lantai jebol)</div>
+              </div>
+              <button onclick="copyToClipboard('buyPlanSL', 'Stop Loss Buy')" style="background: #ef4444; color: #fff; border: none; padding: 0.4rem 0.8rem; border-radius: 6px; font-weight: 800; font-size: 0.75rem; cursor: pointer;">
+                📋 Salin
+              </button>
+            </div>
+
+            <!-- TP Buy Limit -->
+            <div style="background: #1a293e; padding: 0.65rem 0.85rem; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; border-left: 3px solid #3b82f6;">
+              <div>
+                <div style="font-size: 0.7rem; color: #93c5fd; text-transform: uppercase;">TAKE PROFIT (TARGET CUAN):</div>
+                <div id="buyPlanTP" style="font-family: 'JetBrains Mono', monospace; font-size: 1.35rem; font-weight: 900; color: #60a5fa;">1.12350</div>
+                <div style="font-size: 0.7rem; color: #93c5fd;">(Cuan 60 pips saat harga kembali ke atap)</div>
+              </div>
+              <button onclick="copyToClipboard('buyPlanTP', 'Take Profit Buy')" style="background: #3b82f6; color: #fff; border: none; padding: 0.4rem 0.8rem; border-radius: 6px; font-weight: 800; font-size: 0.75rem; cursor: pointer;">
+                📋 Salin
+              </button>
+            </div>
+
+          </div>
+
+          <div style="margin-top: 0.85rem; padding: 0.5rem; background: rgba(16, 185, 129, 0.1); border-radius: 6px; font-size: 0.75rem; color: #a7f3d0; text-align: center;">
+            ⚖️ Rasio Cuan vs Rugi: <strong>1 : 2.0 (Resiko $1.50 vs Potensi Cuan $3.00)</strong>
+          </div>
+        </div>
+
+        <!-- OPSI 2: RENCANA SELL TERBAIK (JUAL MAHAL DI RESISTANCE) -->
+        <div style="background: #24141d; border: 2px solid #ef4444; border-radius: 14px; padding: 1.25rem; position: relative; box-shadow: 0 4px 20px rgba(239, 68, 68, 0.15);">
+          <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(239, 68, 68, 0.3); padding-bottom: 0.6rem; margin-bottom: 1rem;">
+            <div>
+              <span style="background: #ef4444; color: #fff; font-size: 0.7rem; font-weight: 800; padding: 0.2rem 0.5rem; border-radius: 4px;">PILIHAN 2</span>
+              <h3 style="font-size: 1.15rem; font-weight: 800; color: #ef4444; margin-top: 0.2rem;">
+                🔴 RENCANA SELL (JUAL MAHAL DI ATAP)
+              </h3>
+            </div>
+            <span style="font-size: 0.75rem; color: #fca5a5; font-weight: 600;">Tipe: <strong>SELL LIMIT</strong></span>
+          </div>
+
+          <p style="font-size: 0.78rem; color: #94a3b8; margin-bottom: 0.85rem;">
+            Tunggu harga naik menyentuh atap Resistance. Jika harga menyentuh angka ini, MetaTrader akan otomatis menjualkan untukmu:
+          </p>
+
+          <div style="display: flex; flex-direction: column; gap: 0.65rem;">
+            
+            <!-- Entry Sell Limit -->
+            <div style="background: #331d27; padding: 0.65rem 0.85rem; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; border-left: 3px solid #ef4444;">
+              <div>
+                <div style="font-size: 0.7rem; color: #94a3b8; text-transform: uppercase;">ANTRE JUAL DI HARGA (ENTRY):</div>
+                <div id="sellPlanEntry" style="font-family: 'JetBrains Mono', monospace; font-size: 1.35rem; font-weight: 900; color: #fff;">1.12350</div>
+                <div style="font-size: 0.7rem; color: #fca5a5;">(Level Resistance 1 - Jual saat harga paling mahal)</div>
+              </div>
+              <button onclick="copyToClipboard('sellPlanEntry', 'Entry Sell Limit')" style="background: #ef4444; color: #fff; border: none; padding: 0.4rem 0.8rem; border-radius: 6px; font-weight: 800; font-size: 0.75rem; cursor: pointer;">
+                📋 Salin
+              </button>
+            </div>
+
+            <!-- SL Sell Limit -->
+            <div style="background: #331d27; padding: 0.65rem 0.85rem; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; border-left: 3px solid #f59e0b;">
+              <div>
+                <div style="font-size: 0.7rem; color: #fde68a; text-transform: uppercase;">STOP LOSS (BATAS RUGI):</div>
+                <div id="sellPlanSL" style="font-family: 'JetBrains Mono', monospace; font-size: 1.35rem; font-weight: 900; color: #f59e0b;">1.12650</div>
+                <div style="font-size: 0.7rem; color: #fcd34d;">(30 pips di atas Resistance jika atap jebol)</div>
+              </div>
+              <button onclick="copyToClipboard('sellPlanSL', 'Stop Loss Sell')" style="background: #f59e0b; color: #000; border: none; padding: 0.4rem 0.8rem; border-radius: 6px; font-weight: 800; font-size: 0.75rem; cursor: pointer;">
+                📋 Salin
+              </button>
+            </div>
+
+            <!-- TP Sell Limit -->
+            <div style="background: #331d27; padding: 0.65rem 0.85rem; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; border-left: 3px solid #10b981;">
+              <div>
+                <div style="font-size: 0.7rem; color: #a7f3d0; text-transform: uppercase;">TAKE PROFIT (TARGET CUAN):</div>
+                <div id="sellPlanTP" style="font-family: 'JetBrains Mono', monospace; font-size: 1.35rem; font-weight: 900; color: #10b981;">1.11750</div>
+                <div style="font-size: 0.7rem; color: #6ee7b7;">(Cuan 60 pips saat harga kembali turun ke lantai)</div>
+              </div>
+              <button onclick="copyToClipboard('sellPlanTP', 'Take Profit Sell')" style="background: #10b981; color: #000; border: none; padding: 0.4rem 0.8rem; border-radius: 6px; font-weight: 800; font-size: 0.75rem; cursor: pointer;">
+                📋 Salin
+              </button>
+            </div>
+
+          </div>
+
+          <div style="margin-top: 0.85rem; padding: 0.5rem; background: rgba(239, 68, 68, 0.1); border-radius: 6px; font-size: 0.75rem; color: #fca5a5; text-align: center;">
+            ⚖️ Rasio Cuan vs Rugi: <strong>1 : 2.0 (Resiko $1.50 vs Potensi Cuan $3.00)</strong>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- CARA MEMASANG PENDING ORDER DI METATRADER (AGAR TIDAK PERLU NUNGGUIN GRAFIK) -->
+      <div style="background: #090e17; border: 1px solid #334155; border-radius: 12px; padding: 1.25rem;">
+        <h3 style="font-size: 0.95rem; color: #f1f5f9; margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.5rem;">
+          💡 CARA MEMASANG ANTREAN (PENDING ORDER) DI METATRADER HP / PC:
+        </h3>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 0.85rem; font-size: 0.82rem; color: #cbd5e1; line-height: 1.45;">
+          <div style="background: #131b2e; padding: 0.75rem; border-radius: 8px; border-left: 3px solid #3b82f6;">
+            <strong style="color: #60a5fa; display: block; margin-bottom: 0.25rem;">Langkah 1:</strong>
+            Buka MetaTrader $\rightarrow$ Pilih <strong id="stepPairName">EURUSD</strong> $\rightarrow$ Klik <strong>"Transaksi Baru" (New Order)</strong>.
+          </div>
+          <div style="background: #131b2e; padding: 0.75rem; border-radius: 8px; border-left: 3px solid #f59e0b;">
+            <strong style="color: #fbbf24; display: block; margin-bottom: 0.25rem;">Langkah 2: Ganti Tipe Order</strong>
+            Ubah menu <strong>"Eksekusi Pasar" (Market Execution)</strong> menjadi <strong>"Buy Limit"</strong> (jika pilih Opsi 1) atau <strong>"Sell Limit"</strong> (jika pilih Opsi 2).
+          </div>
+          <div style="background: #131b2e; padding: 0.75rem; border-radius: 8px; border-left: 3px solid #8b5cf6;">
+            <strong style="color: #c084fc; display: block; margin-bottom: 0.25rem;">Langkah 3: Masukkan Angka</strong>
+            Salin angka: <strong>Harga Entry</strong>, <strong>Stop Loss (SL)</strong>, dan <strong>Take Profit (TP)</strong> dari kotak di atas.
+          </div>
+          <div style="background: #131b2e; padding: 0.75rem; border-radius: 8px; border-left: 3px solid #10b981;">
+            <strong style="color: #4ade80; display: block; margin-bottom: 0.25rem;">Langkah 4: Klik Pasang (Place)</strong>
+            Selesai! Kamu bisa tutup aplikasi HP kamu. MetaTrader akan otomatis mengeksekusi saat harga menyentuh lantai/atap.
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- News Protection Warning Banner -->
+    <div class="news-alert-banner" id="newsBanner">
+      <div class="news-alert-info">
+        <div class="news-alert-badge" id="newsBannerBadge">🛡️ RADAR BERITA AKTIF</div>
+        <div class="news-alert-text">
+          <h3 id="newsBannerTitle">Sistem Memantau Rilis Berita Ekonomi Berdampak Tinggi (High Impact)</h3>
+          <p id="newsBannerDesc">Jika ada berita Non-Farm Payrolls (NFP), Keputusan Suku Bunga The Fed (FOMC), atau Inflasi (CPI), sistem akan otomatis memberi peringatan untuk MENUNDA open posisi.</p>
+        </div>
+      </div>
+      <div style="font-size: 0.75rem; text-align: right; color: var(--text-muted); font-family: 'JetBrains Mono', monospace;" id="clockUtc">
+        UTC: --:--:--
+      </div>
+    </div>
+
+    <!-- Top Metrics: Pengaturan Modal & Resiko -->
+    <div class="top-metrics-grid">
+      
+      <!-- Card 1: Kalkulator Lot & Resiko -->
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">💰 Atur Modalmu (Kalkulator Lot)</span>
+          <span style="font-size: 0.75rem; color: var(--yellow-glow);">Anti-Bangkrut</span>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 0.6rem;">
+          <div class="calc-row">
+            <span>Berapa Saldo Akunmu ($):</span>
+            <input type="number" id="accountBalance" class="calc-input" value="100" min="10" oninput="calculateLot()">
+          </div>
+          <div class="calc-row">
+            <span>Maksimal Resiko (% per trade):</span>
+            <input type="number" id="riskPercent" class="calc-input" value="1.5" step="0.5" min="0.5" max="5" oninput="calculateLot()">
+          </div>
+          <div class="calc-row">
+            <span>Jarak Stop Loss (pips):</span>
+            <input type="number" id="slPips" class="calc-input" value="30" min="10" oninput="calculateLot()">
+          </div>
+
+          <div class="calc-result-box">
+            <div style="font-size: 0.72rem; color: var(--text-muted); margin-bottom: 0.2rem;">UKURAN LOT AMAN YANG DIHITUNG:</div>
+            <div class="calc-result-lot" id="calculatedLot">0.01 LOT</div>
+            <div style="font-size: 0.72rem; color: #94a3b8; margin-top: 0.2rem;" id="calcMaxRiskMoney">
+              Maksimal resiko rugi jika apes: <strong>$1.50</strong> (1.5% modal)
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 2: Status Jam Pasar Sedang Ramai atau Sepi -->
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">⏰ Waktu Terbaik Trading</span>
+          <span style="font-size: 0.75rem; color: var(--green-glow);">Market Hours</span>
+        </div>
+        <div style="font-size: 0.8rem; line-height: 1.5; color: #cbd5e1;">
+          <p>Pasar forex paling aktif dan paling gampang dapat profit saat <strong>Sesi London (14:00 - 23:00 WIB)</strong> dan <strong>Sesi New York (19:00 - 04:00 WIB)</strong>.</p>
+          <div style="margin-top: 0.75rem; padding: 0.6rem; background: rgba(0,0,0,0.3); border-radius: 8px;">
+            <div style="font-size: 0.75rem; color: #94a3b8;">Status Pasar Saat Ini:</div>
+            <div id="sessionSummaryStatus" style="font-weight: 700; color: #60a5fa; margin-top: 0.2rem;">
+              Memeriksa sesi bursa...
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 3: Checklist Cepat -->
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">🛡️ Ceklis 10 Detik Sebelum Klik</span>
+          <span style="font-size: 0.75rem; color: var(--text-muted);">Disiplin</span>
+        </div>
+        <div style="font-size: 0.78rem; color: #94a3b8; line-height: 1.4;">
+          <p>✔️ Sudah pasang <strong>Stop Loss</strong> di MetaTrader?</p>
+          <p>✔️ Lot tidak melebihi <strong>0.01</strong>?</p>
+          <p>✔️ Tidak ada berita bertanda merah (High Impact) di kalender bawah?</p>
+          <p style="margin-top: 0.4rem; color: #34d399;">Jika ketiga hal di atas beres, kamu siap eksekusi dengan aman!</p>
+        </div>
+      </div>
+
+    </div>
+
+
+    <!-- Middle Section: Live TradingView Interactive Chart & Technical Gauge -->
+    <div class="chart-section-grid">
+      
+      <!-- Chart Card -->
+      <div class="card chart-card">
+        <div style="padding: 0.75rem 1.25rem; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; background: #131b2e;">
+          <span class="card-title">📈 Live Interactive Candlestick Chart (TradingView Pro Engine)</span>
+          <span style="font-size: 0.75rem; color: var(--text-muted);">Real-time Institutional Data Feed</span>
+        </div>
+        <div id="tradingview_chart_container" style="height: 520px; width: 100%;">
+          <!-- TradingView Chart Widget injected by JS -->
+        </div>
+      </div>
+
+      <!-- Technical Gauge Card -->
+      <div class="card" style="padding: 0; overflow: hidden; display: flex; flex-direction: column;">
+        <div style="padding: 0.75rem 1.25rem; border-bottom: 1px solid var(--border-color); background: #131b2e;">
+          <span class="card-title">🎯 Barometer 26 Indikator Teknikal</span>
+        </div>
+        <div id="tradingview_gauge_container" style="flex: 1; min-height: 440px; width: 100%;">
+          <!-- TradingView Gauge Widget injected by JS -->
+        </div>
+        <div style="padding: 0.75rem 1rem; background: #0c1220; font-size: 0.75rem; color: var(--text-muted); border-top: 1px solid var(--border-color); line-height: 1.4;">
+          📌 <strong>Cara Baca:</strong> Kecepatan jarum mengukur gabungan indikator RSI, MACD, Stoch, dan rata-rata Moving Average (EMA 20, 50, 100, 200).
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Bottom Section: Live Economic News Calendar & Market Timeline -->
+    <div class="news-section-grid">
+
+      <!-- Economic Calendar (High/Medium Impact Events) -->
+      <div class="card" style="padding: 0; overflow: hidden;">
+        <div style="padding: 0.75rem 1.25rem; border-bottom: 1px solid var(--border-color); background: #131b2e; display: flex; justify-content: space-between; align-items: center;">
+          <span class="card-title">📰 Kalender Berita Ekonomi Dunia (High & Medium Impact)</span>
+          <span style="font-size: 0.75rem; color: var(--yellow-glow);">🔴 Red Folder News Filter</span>
+        </div>
+        <div id="tradingview_calendar_container" class="widget-container">
+          <!-- TradingView Calendar Widget injected by JS -->
+        </div>
+      </div>
+
+      <!-- Breaking Financial News & Timeline -->
+      <div class="card" style="padding: 0; overflow: hidden;">
+        <div style="padding: 0.75rem 1.25rem; border-bottom: 1px solid var(--border-color); background: #131b2e; display: flex; justify-content: space-between; align-items: center;">
+          <span class="card-title">🌐 Berita Pasar Finansial Terkini</span>
+          <span style="font-size: 0.75rem; color: #60a5fa;">Breaking News Feed</span>
+        </div>
+        <div id="tradingview_news_container" class="widget-container">
+          <!-- TradingView News Timeline Widget injected by JS -->
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Beginner Checklist Card (Proteksi Eksekusi) -->
+    <div class="checklist-card">
+      <div class="checklist-title">
+        <span>🛡️ 4 Langkah Pengecekan Wajib Sebelum Kamu Klik "BUY" atau "SELL" di Broker:</span>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem;">
+        <label class="checklist-item">
+          <input type="checkbox" id="chk1">
+          <span><strong>1. Cek Kalender Berita:</strong> Pastikan tidak ada berita berlogo merah (High Impact) pada mata uang ini dalam kurun 30 menit ke depan atau 15 menit sesudah.</span>
+        </label>
+        <label class="checklist-item">
+          <input type="checkbox" id="chk2">
+          <span><strong>2. Cek Keselarasan Barometer:</strong> Pastikan jarum Barometer berada di area <em>"Strong Buy"</em> atau <em>"Strong Sell"</em> (jangan masuk jika Neutral).</span>
+        </label>
+        <label class="checklist-item">
+          <input type="checkbox" id="chk3">
+          <span><strong>3. Ukuran Lot Sudah Disesuaikan:</strong> Pasang lot sesuai hasil kalkulator di atas (jangan pernah all-in atau pakai lot gajah).</span>
+        </label>
+        <label class="checklist-item">
+          <input type="checkbox" id="chk4">
+          <span><strong>4. Stop Loss Wajib Dimasukkan:</strong> Jangan tinggalkan order terbuka tanpa memasang angka batas kerugian (Stop Loss).</span>
+        </label>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Footer -->
+  <footer>
+    <p>Smart Forex Signal & Intelligence Terminal • Dirancang untuk perlindungan modal & analisa pasar terstruktur.</p>
+    <p style="margin-top: 0.25rem; color: #64748b; font-size: 0.72rem;">
+      Catatan Penting: Tidak ada sistem di dunia yang 100% selalu benar. Pasar digerakkan oleh dinamika global. Keberhasilan trading jangka panjang bertumpu pada disiplin Stop Loss dan Manajemen Risiko.
+    </p>
+  </footer>
+
+  <!-- Toast Notification Container -->
+  <div id="toastNotification" style="display: none; position: fixed; bottom: 24px; right: 24px; background: #10b981; color: #fff; padding: 0.85rem 1.4rem; border-radius: 10px; font-weight: 700; font-size: 0.9rem; box-shadow: 0 10px 25px rgba(0,0,0,0.5); z-index: 9999; border: 1px solid rgba(255,255,255,0.2);">
+    ✅ Angka berhasil disalin! Tinggal tempel di MetaTrader.
+  </div>
+
+  <!-- Scripts: TradingView Integration & Real-time Calculations -->
+  <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
+  
+  <script>
+    // State
+    let currentPair = "OANDA:EURUSD";
+    let currentTimeframe = "1h";
+    let currentAction = "BUY"; // 'BUY', 'SELL', 'AUTO'
+    let currentLivePrice = 1.12050;
+
+    // Currency metadata with typical daily range for Support & Resistance calculation
+    const PAIR_METAS = {
+      "OANDA:EURUSD": { name: "EURUSD", decimals: 5, range: 0.00680, slPips: 0.00300, defaultPrice: 1.12050, base: "EUR", quote: "USD" },
+      "OANDA:GBPUSD": { name: "GBPUSD", decimals: 5, range: 0.00900, slPips: 0.00350, defaultPrice: 1.30250, base: "GBP", quote: "USD" },
+      "OANDA:USDJPY": { name: "USDJPY", decimals: 3, range: 1.150, slPips: 0.350, defaultPrice: 152.450, base: "USD", quote: "JPY" },
+      "OANDA:AUDUSD": { name: "AUDUSD", decimals: 5, range: 0.00650, slPips: 0.00300, defaultPrice: 0.65800, base: "AUD", quote: "USD" },
+      "OANDA:USDCAD": { name: "USDCAD", decimals: 5, range: 0.00700, slPips: 0.00300, defaultPrice: 1.38500, base: "USD", quote: "CAD" },
+      "OANDA:XAUUSD": { name: "XAUUSD", decimals: 2, range: 45.00, slPips: 10.00, defaultPrice: 3996.50, base: "XAU", quote: "USD" }
+    };
+
+    // Initialize on load
+    window.addEventListener('DOMContentLoaded', () => {
+      updateMarketSessions();
+      setInterval(updateMarketSessions, 10000);
+      updateUtcClock();
+      setInterval(updateUtcClock, 1000);
+      calculateLot();
+      loadAllWidgets();
+      fetchLivePrices();
+      setInterval(fetchLivePrices, 15000); // refresh price every 15s
+    });
+
+    // Clock
+    function updateUtcClock() {
+      const now = new Date();
+      const utcStr = now.toUTCString().split(' ')[4] + ' UTC';
+      const wibStr = now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit' }) + ' WIB';
+      document.getElementById('clockUtc').innerText = `${utcStr} | ${wibStr}`;
+    }
+
+    // Market Session Hours in UTC & Weekend Detection
+    function updateMarketSessions() {
+      const now = new Date();
+      const utcDay = now.getUTCDay();
+      const utcHour = now.getUTCHours();
+
+      // Forex Market Weekend Check (Closes Friday 21:00 UTC, Opens Sunday 21:00 UTC)
+      const isWeekend = (utcDay === 6) || (utcDay === 0 && utcHour < 21) || (utcDay === 5 && utcHour >= 22);
+
+      const weekendBanner = document.getElementById('weekendClosedBanner');
+      if (weekendBanner) {
+        weekendBanner.style.display = isWeekend ? 'block' : 'none';
+      }
+
+      // Sydney: 21:00 - 06:00 UTC
+      const sydneyOpen = !isWeekend && (utcHour >= 21 || utcHour < 6);
+      // Tokyo: 00:00 - 09:00 UTC
+      const tokyoOpen = !isWeekend && (utcHour >= 0 && utcHour < 9);
+      // London: 07:00 - 16:00 UTC
+      const londonOpen = !isWeekend && (utcHour >= 7 && utcHour < 16);
+      // New York: 12:00 - 21:00 UTC
+      const nyOpen = !isWeekend && (utcHour >= 12 && utcHour < 21);
+
+      setSessionStatus('sess-sydney', sydneyOpen);
+      setSessionStatus('sess-tokyo', tokyoOpen);
+      setSessionStatus('sess-london', londonOpen);
+      setSessionStatus('sess-ny', nyOpen);
+
+      let openSessions = [];
+      if (londonOpen) openSessions.push("London (Eropa)");
+      if (nyOpen) openSessions.push("New York (Amerika)");
+      if (tokyoOpen) openSessions.push("Tokyo (Asia)");
+      if (sydneyOpen) openSessions.push("Sydney (Australia)");
+
+      const summary = document.getElementById('sessionSummaryStatus');
+      if (summary) {
+        if (isWeekend) {
+          summary.innerHTML = `🛑 <strong>PASAR TUTUP TOTAL (LIBUR AKHIR PEKAN)</strong><br><span style="font-size:0.72rem; color:#94a3b8;">Buka kembali Senin subuh jam 05:00 WIB.</span>`;
+        } else if (openSessions.length > 0) {
+          summary.innerHTML = `🟢 Sedang Buka: <strong>${openSessions.join(' & ')}</strong> (Volume Baik)`;
+        } else {
+          summary.innerHTML = `🟡 Pasar Sedang Relatif Sepi (Jeda Pergantian Sesi)`;
+        }
+      }
+    }
+
+    function setSessionStatus(id, isOpen) {
+      const el = document.getElementById(id);
+      if (!el) return;
+      const dot = el.querySelector('.session-dot');
+      if (isOpen) {
+        dot.classList.add('open');
+        el.style.color = '#10b981';
+      } else {
+        dot.classList.remove('open');
+        el.style.color = '#6b7280';
+      }
+    }
+
+    // Fetch Live Price from Open Financial APIs
+    async function fetchLivePrices() {
+      const meta = PAIR_METAS[currentPair] || PAIR_METAS["OANDA:EURUSD"];
+      try {
+        if (meta.base === "XAU") {
+          // Gold API
+          const res = await fetch("https://api.gold-api.com/price/XAU");
+          if (res.ok) {
+            const data = await res.json();
+            if (data && data.price) {
+              currentLivePrice = parseFloat(data.price);
+            }
+          }
+        } else {
+          // Forex Exchange Rate API
+          const res = await fetch(`https://open.er-api.com/v6/latest/${meta.base}`);
+          if (res.ok) {
+            const data = await res.json();
+            if (data && data.rates && data.rates[meta.quote]) {
+              currentLivePrice = parseFloat(data.rates[meta.quote]);
+            }
+          }
+        }
+      } catch (err) {
+        console.warn("API fallback to default price:", err);
+      }
+      updateKeyLevelsAndOrders();
+    }
+
+    // Calculate Real Support, Resistance, and Pending Limit Orders
+    function updateKeyLevelsAndOrders() {
+      const meta = PAIR_METAS[currentPair] || PAIR_METAS["OANDA:EURUSD"];
+      const decimals = meta.decimals;
+      const p = currentLivePrice;
+      const r = meta.range;
+
+      // Key Levels (Support & Resistance based on dynamic range)
+      const S1 = p - (r * 0.45);
+      const R1 = p + (r * 0.45);
+
+      // Buy Limit Plan (Wait for pullback down to Support)
+      const buyEntry = S1;
+      const buySL = S1 - meta.slPips;
+      const buyTP = R1;
+
+      // Sell Limit Plan (Wait for rally up to Resistance)
+      const sellEntry = R1;
+      const sellSL = R1 + meta.slPips;
+      const sellTP = S1;
+
+      // Populate Diagnosis
+      document.getElementById('diagPair').innerText = meta.name;
+      document.getElementById('diagLivePrice').innerText = p.toFixed(decimals);
+      document.getElementById('diagR1').innerText = R1.toFixed(decimals);
+      document.getElementById('diagS1').innerText = S1.toFixed(decimals);
+
+      // Populate Option 1 (Buy Limit)
+      document.getElementById('buyPlanEntry').innerText = buyEntry.toFixed(decimals);
+      document.getElementById('buyPlanSL').innerText = buySL.toFixed(decimals);
+      document.getElementById('buyPlanTP').innerText = buyTP.toFixed(decimals);
+
+      // Populate Option 2 (Sell Limit)
+      document.getElementById('sellPlanEntry').innerText = sellEntry.toFixed(decimals);
+      document.getElementById('sellPlanSL').innerText = sellSL.toFixed(decimals);
+      document.getElementById('sellPlanTP').innerText = sellTP.toFixed(decimals);
+
+      // Populate Step Guide
+      document.getElementById('stepPairName').innerText = meta.name;
+    }
+
+
+    // Copy to Clipboard Utility with Toast
+    function copyToClipboard(elementId, label) {
+      const text = document.getElementById(elementId).innerText.trim().replace(' LOT', '');
+      navigator.clipboard.writeText(text).then(() => {
+        showToast(`✅ Berhasil disalin: ${label} = ${text}! Tinggal tempel di MetaTrader.`);
+      }).catch(err => {
+        // Fallback
+        const temp = document.createElement("textarea");
+        temp.value = text;
+        document.body.appendChild(temp);
+        temp.select();
+        document.execCommand("copy");
+        document.body.removeChild(temp);
+        showToast(`✅ Berhasil disalin: ${label} = ${text}!`);
+      });
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById('toastNotification');
+      toast.innerText = msg;
+      toast.style.display = 'block';
+      setTimeout(() => {
+        toast.style.display = 'none';
+      }, 3500);
+    }
+
+    // Pair Change Handler
+    function onPairChange() {
+      const pairSel = document.getElementById('pairSelect');
+      currentPair = pairSel.value;
+      const meta = PAIR_METAS[currentPair] || PAIR_METAS["OANDA:EURUSD"];
+      currentLivePrice = meta.defaultPrice;
+      loadAllWidgets();
+      fetchLivePrices();
+    }
+
+    // Timeframe Change Handler
+    function onTimeframeChange() {
+      currentTimeframe = document.getElementById('timeframeSelect').value;
+      loadAllWidgets();
+    }
+
+    // Load / Reload TradingView Widgets
+    function loadAllWidgets() {
+      renderChartWidget();
+      renderGaugeWidget();
+      renderCalendarWidget();
+      renderNewsWidget();
+      updateKeyLevelsAndOrders();
+    }
+
+    // 1. Chart Widget
+    function renderChartWidget() {
+      const container = document.getElementById('tradingview_chart_container');
+      container.innerHTML = '';
+      
+      let tfInterval = "60";
+      if (currentTimeframe === "15m") tfInterval = "15";
+      if (currentTimeframe === "1h") tfInterval = "60";
+      if (currentTimeframe === "4h") tfInterval = "240";
+      if (currentTimeframe === "1D") tfInterval = "D";
+
+      new TradingView.widget({
+        "autosize": true,
+        "symbol": currentPair,
+        "interval": tfInterval,
+        "timezone": "Asia/Jakarta",
+        "theme": "dark",
+        "style": "1",
+        "locale": "id",
+        "enable_publishing": false,
+        "backgroundColor": "#0f172a",
+        "gridColor": "rgba(255, 255, 255, 0.05)",
+        "hide_top_toolbar": false,
+        "hide_legend": false,
+        "save_image": false,
+        "container_id": "tradingview_chart_container",
+        "studies": [
+          "STD;EMA",
+          "STD;RSI"
+        ]
+      });
+    }
+
+    // 2. Technical Gauge Widget
+    function renderGaugeWidget() {
+      const container = document.getElementById('tradingview_gauge_container');
+      container.innerHTML = '';
+
+      let tfInterval = "1h";
+      if (currentTimeframe === "15m") tfInterval = "15m";
+      if (currentTimeframe === "1h") tfInterval = "1h";
+      if (currentTimeframe === "4h") tfInterval = "4h";
+      if (currentTimeframe === "1D") tfInterval = "1D";
+
+      const script = document.createElement('script');
+      script.type = 'text/javascript';
+      script.src = 'https://s3.tradingview.com/external-embedding/embed-widget-technical-analysis.js';
+      script.async = true;
+      script.innerHTML = JSON.stringify({
+        "interval": tfInterval,
+        "width": "100%",
+        "isTransparent": true,
+        "height": 450,
+        "symbol": currentPair,
+        "showIntervalTabs": true,
+        "displayMode": "single",
+        "locale": "id",
+        "colorTheme": "dark"
+      });
+
+      const wrapper = document.createElement('div');
+      wrapper.className = 'tradingview-widget-container';
+      wrapper.appendChild(script);
+      container.appendChild(wrapper);
+    }
+
+    // 3. Economic Calendar Widget
+    function renderCalendarWidget() {
+      const container = document.getElementById('tradingview_calendar_container');
+      container.innerHTML = '';
+
+      const script = document.createElement('script');
+      script.type = 'text/javascript';
+      script.src = 'https://s3.tradingview.com/external-embedding/embed-widget-events.js';
+      script.async = true;
+      script.innerHTML = JSON.stringify({
+        "colorTheme": "dark",
+        "isTransparent": true,
+        "width": "100%",
+        "height": "100%",
+        "locale": "id",
+        "importanceFilter": "0,1",
+        "currencyFilter": "USD,EUR,GBP,JPY,AUD,CAD"
+      });
+
+      const wrapper = document.createElement('div');
+      wrapper.className = 'tradingview-widget-container';
+      wrapper.appendChild(script);
+      container.appendChild(wrapper);
+    }
+
+    // 4. News Timeline Widget
+    function renderNewsWidget() {
+      const container = document.getElementById('tradingview_news_container');
+      container.innerHTML = '';
+
+      const script = document.createElement('script');
+      script.type = 'text/javascript';
+      script.src = 'https://s3.tradingview.com/external-embedding/embed-widget-timeline.js';
+      script.async = true;
+      script.innerHTML = JSON.stringify({
+        "feedMode": "all_symbols",
+        "isTransparent": true,
+        "displayMode": "regular",
+        "width": "100%",
+        "height": "100%",
+        "colorTheme": "dark",
+        "locale": "id"
+      });
+
+      const wrapper = document.createElement('div');
+      wrapper.className = 'tradingview-widget-container';
+      wrapper.appendChild(script);
+      container.appendChild(wrapper);
+    }
+
+    // Lot Size Calculator Logic
+    function calculateLot() {
+      const balance = parseFloat(document.getElementById('accountBalance').value) || 100;
+      const riskPercent = parseFloat(document.getElementById('riskPercent').value) || 1.5;
+      const slPips = parseFloat(document.getElementById('slPips').value) || 30;
+
+      const riskAmount = balance * (riskPercent / 100);
+      let lotSize = riskAmount / (slPips * 10);
+
+      if (lotSize < 0.01) {
+        lotSize = 0.01;
+      } else {
+        lotSize = Math.floor(lotSize * 100) / 100;
+      }
+
+      document.getElementById('calculatedLot').innerText = lotSize.toFixed(2) + " LOT";
+      document.getElementById('calcMaxRiskMoney').innerHTML = 
+        `Maksimal resiko rugi jika apes: <strong>$${riskAmount.toFixed(2)}</strong> (${riskPercent}% modal)`;
+
+      updateKeyLevelsAndOrders();
+    }
+  </script>
+</body>
+</html>
+

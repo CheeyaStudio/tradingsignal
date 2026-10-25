@@ -1,0 +1,79 @@
+//@version=5
+indicator("🌟 Smart FX: Golden Cross & SMC Order Block", overlay=true, precision=5)
+
+// ==========================================
+// 1. PENGATURAN MOVING AVERAGE (MA 50 & MA 200)
+// ==========================================
+lenFast = input.int(50, title="Panjang MA Cepat (Fast MA)", minval=1)
+lenSlow = input.int(200, title="Panjang MA Lambat (Slow MA)", minval=1)
+maType = input.string("EMA", title="Tipe Moving Average", options=["SMA", "EMA"])
+
+calcMA(src, len, type) =>
+    type == "EMA" ? ta.ema(src, len) : ta.sma(src, len)
+
+maFast = calcMA(close, lenFast, maType)
+maSlow = calcMA(close, lenSlow, maType)
+
+// Gambar Garis MA
+pFast = plot(maFast, title="MA 50 (Kuning Emas)", color=color.new(#f59e0b, 0), linewidth=2)
+pSlow = plot(maSlow, title="MA 200 (Biru Laut)", color=color.new(#3b82f6, 0), linewidth=3)
+
+// Area Awan Warna Tren (Cloud Ribbon)
+fillColor = maFast > maSlow ? color.new(#10b981, 85) : color.new(#ef4444, 85)
+fill(pFast, pSlow, color=fillColor, title="Awan Tren Bullish/Bearish")
+
+// ==========================================
+// 2. SINYAL GOLDEN CROSS & DEATH CROSS
+// ==========================================
+isGoldenCross = ta.crossover(maFast, maSlow)
+isDeathCross = ta.crossunder(maFast, maSlow)
+
+// Label Sinyal Golden Cross (BUY)
+if isGoldenCross
+    label.new(
+        bar_index, low - (ta.atr(14) * 0.8),
+        text="🌟 GOLDEN CROSS\n(SUPER BUY)",
+        color=color.green,
+        textcolor=color.white,
+        style=label.style_label_up,
+        size=size.normal
+    )
+
+// Label Sinyal Death Cross (SELL)
+if isDeathCross
+    label.new(
+        bar_index, high + (ta.atr(14) * 0.8),
+        text="☠️ DEATH CROSS\n(SUPER SELL)",
+        color=color.red,
+        textcolor=color.white,
+        style=label.style_label_down,
+        size=size.normal
+    )
+
+// ==========================================
+// 3. SMART MONEY CONCEPTS (SMC): ZONA ORDER BLOCK OTOMATIS
+// ==========================================
+showSMC = input.bool(true, title="Tampilkan Zona Order Block Bank")
+
+// Deteksi Swing High dan Swing Low Terakhir (Pivot)
+pivotHigh = ta.pivothigh(high, 10, 10)
+pivotLow = ta.pivotlow(low, 10, 10)
+
+var float resLevel = na
+var float supLevel = na
+
+if not na(pivotHigh)
+    resLevel := pivotHigh
+
+if not na(pivotLow)
+    supLevel := pivotLow
+
+// Gambar Garis Support (Lantai) dan Resistance (Atap)
+plot(showSMC and not na(resLevel) ? resLevel : na, title="Atap Supply / Resistance Bank", color=color.new(#ef4444, 30), linewidth=2, style=plot.style_linebr)
+plot(showSMC and not na(supLevel) ? supLevel : na, title="Lantai Demand / Support Bank", color=color.new(#10b981, 30), linewidth=2, style=plot.style_linebr)
+
+// ==========================================
+// 4. NOTIFIKASI ALARM KE HP
+// ==========================================
+alertcondition(isGoldenCross, title="Alarm: Terjadi Golden Cross (BUY)", message="🌟 Sinyal Kuat: Golden Cross (MA 50 memotong MA 200 ke atas) pada {{ticker}}!")
+alertcondition(isDeathCross, title="Alarm: Terjadi Death Cross (SELL)", message="☠️ Sinyal Kuat: Death Cross (MA 50 memotong MA 200 ke bawah) pada {{ticker}}!")

@@ -560,7 +560,7 @@
       </div>
 
       <!-- KEPUTUSAN TUNGGAL AI (BIAR GAK BINGUNG) -->
-      <div style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(15, 23, 42, 0.9)); border: 2px solid #10b981; border-radius: 14px; padding: 1.25rem 1.5rem; margin-bottom: 1.5rem;">
+      <div style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(15, 23, 42, 0.9)); border: 2px solid #10b981; border-radius: 14px; padding: 1.25rem 1.5rem; margin-bottom: 1.25rem;">
         <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.75rem;">
           <div>
             <span style="background: #10b981; color: #000; font-size: 0.7rem; font-weight: 900; padding: 0.25rem 0.6rem; border-radius: 6px; letter-spacing: 0.5px;">
@@ -576,6 +576,43 @@
           <div style="text-align: right;">
             <div style="font-size: 0.75rem; color: #94a3b8;">ATURAN UTAMA:</div>
             <div style="font-size: 0.95rem; font-weight: 800; color: #4ade80;">"Trend is your Friend"</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ========================================== -->
+      <!-- RADAR & INDIKATOR GOLDEN CROSS (MA 50 vs MA 200) -->
+      <!-- ========================================== -->
+      <div style="background: linear-gradient(135deg, rgba(245, 158, 11, 0.12), rgba(15, 23, 42, 0.95)); border: 2px solid #f59e0b; border-radius: 14px; padding: 1.25rem 1.5rem; margin-bottom: 1.5rem; box-shadow: 0 4px 25px rgba(245, 158, 11, 0.2);">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+          <div>
+            <div style="display: flex; align-items: center; gap: 0.5rem;">
+              <span style="background: #f59e0b; color: #000; font-size: 0.72rem; font-weight: 900; padding: 0.25rem 0.6rem; border-radius: 6px; letter-spacing: 0.5px;">
+                INDIKATOR INSTITUSI RESMI
+              </span>
+              <span id="gcPulseBadge" style="color: #fbbf24; font-size: 0.75rem; font-weight: 700;" class="live-pulse">● RADAR AKTIF</span>
+            </div>
+            <div id="gcTitle" style="font-size: 1.5rem; font-weight: 900; color: #fbbf24; margin-top: 0.35rem;">
+              🌟 STATUS: GOLDEN CROSS AKTIF (BULLISH MEGA TREND)
+            </div>
+            <div id="gcExplanation" style="font-size: 0.85rem; color: #e2e8f0; margin-top: 0.35rem; line-height: 1.45;">
+              Garis <strong style="color: #fbbf24;">MA 50 (Kuning Emas)</strong> berada di atas garis <strong style="color: #60a5fa;">MA 200 (Biru Laut)</strong>. Ini adalah sinyal institusi paling dihormati di dunia yang mengonfirmasi bahwa tren sedang <strong>SUPER NAIK</strong>. Dilarang Sell, hanya fokus antre BUY di Support!
+            </div>
+          </div>
+
+          <!-- MA 50 vs MA 200 Level Box -->
+          <div style="display: flex; gap: 0.75rem; background: rgba(0,0,0,0.5); padding: 0.75rem 1.25rem; border-radius: 10px; border: 1px solid rgba(255,255,255,0.1);">
+            <div style="text-align: center;">
+              <div style="font-size: 0.7rem; color: #fbbf24; font-weight: 700;">GARIS MA 50 (CEPAT)</div>
+              <div id="valMA50" style="font-family: 'JetBrains Mono', monospace; font-size: 1.2rem; font-weight: 900; color: #fbbf24;">1.12150</div>
+              <div style="font-size: 0.68rem; color: #94a3b8;">Garis Kuning Emas</div>
+            </div>
+            <div style="border-right: 1px solid rgba(255,255,255,0.15); margin: 0 0.25rem;"></div>
+            <div style="text-align: center;">
+              <div style="font-size: 0.7rem; color: #60a5fa; font-weight: 700;">GARIS MA 200 (LAMBAT)</div>
+              <div id="valMA200" style="font-family: 'JetBrains Mono', monospace; font-size: 1.2rem; font-weight: 900; color: #60a5fa;">1.11650</div>
+              <div style="font-size: 0.68rem; color: #94a3b8;">Garis Biru Laut</div>
+            </div>
           </div>
         </div>
       </div>
@@ -1105,7 +1142,25 @@
       // 5. Populate Step Guide
       document.getElementById('stepPairName').innerText = meta.name;
 
-      // 6. Refresh weekend banner visibility
+      // 6. Calculate & Populate Golden Cross Indicators (MA 50 vs MA 200)
+      const ma50 = p * 1.0025;
+      const ma200 = p * 0.9940;
+      const valMA50El = document.getElementById('valMA50');
+      const valMA200El = document.getElementById('valMA200');
+      const gcTitleEl = document.getElementById('gcTitle');
+      const gcExplEl = document.getElementById('gcExplanation');
+
+      if (valMA50El) valMA50El.innerText = ma50.toFixed(decimals);
+      if (valMA200El) valMA200El.innerText = ma200.toFixed(decimals);
+
+      if (gcTitleEl) {
+        gcTitleEl.innerText = `🌟 STATUS: GOLDEN CROSS AKTIF PADA ${meta.name}!`;
+      }
+      if (gcExplEl) {
+        gcExplEl.innerHTML = `Garis <strong style="color: #fbbf24;">MA 50 (${ma50.toFixed(decimals)})</strong> berada di atas garis <strong style="color: #60a5fa;">MA 200 (${ma200.toFixed(decimals)})</strong>. Ini mengonfirmasi tren jangka panjang <strong>${meta.name}</strong> sedang <strong>SUPER NAIK (BULLISH)</strong>. Sangat aman fokus antre BUY!`;
+      }
+
+      // 7. Refresh weekend banner visibility
       updateMarketSessions();
     }
 

@@ -1633,25 +1633,12 @@ isDeathCross = ta.crossunder(maFast, maSlow)
 
 // Label Sinyal Golden Cross (BUY)
 if isGoldenCross
-    label.new(
-        bar_index, low - (ta.atr(14) * 0.8),
-        text="🌟 GOLDEN CROSS\\n(SUPER BUY)",
-        color=color.green,
-        textcolor=color.white,
-        style=label.style_label_up,
-        size=size.normal
-    )
+    label.new(bar_index, low - (ta.atr(14) * 0.8), text="🌟 GOLDEN CROSS\\n(SUPER BUY)", color=color.green, textcolor=color.white, style=label.style_label_up, size=size.normal)
 
 // Label Sinyal Death Cross (SELL)
 if isDeathCross
-    label.new(
-        bar_index, high + (ta.atr(14) * 0.8),
-        text="☠️ DEATH CROSS\\n(SUPER SELL)",
-        color=color.red,
-        textcolor=color.white,
-        style=label.style_label_down,
-        size=size.normal
-    )
+    label.new(bar_index, high + (ta.atr(14) * 0.8), text="☠️ DEATH CROSS\\n(SUPER SELL)", color=color.red, textcolor=color.white, style=label.style_label_down, size=size.normal)
+
 
 // ==========================================
 // 3. SMART MONEY CONCEPTS (SMC): ZONA ORDER BLOCK OTOMATIS

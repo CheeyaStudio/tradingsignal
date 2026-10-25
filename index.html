@@ -1144,7 +1144,7 @@
       updateKeyLevelsAndOrders();
     }
 
-    // 1. Chart Widget
+    // 1. Chart Widget (TradingView Advanced Candlestick Chart Engine)
     function renderChartWidget() {
       const container = document.getElementById('tradingview_chart_container');
       container.innerHTML = '';
@@ -1155,7 +1155,11 @@
       if (currentTimeframe === "4h") tfInterval = "240";
       if (currentTimeframe === "1D") tfInterval = "D";
 
-      new TradingView.widget({
+      const script = document.createElement('script');
+      script.type = 'text/javascript';
+      script.src = 'https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js';
+      script.async = true;
+      script.innerHTML = JSON.stringify({
         "autosize": true,
         "symbol": currentPair,
         "interval": tfInterval,
@@ -1164,17 +1168,24 @@
         "style": "1",
         "locale": "id",
         "enable_publishing": false,
-        "backgroundColor": "#0f172a",
-        "gridColor": "rgba(255, 255, 255, 0.05)",
-        "hide_top_toolbar": false,
-        "hide_legend": false,
-        "save_image": false,
-        "container_id": "tradingview_chart_container",
-        "studies": [
-          "STD;EMA",
-          "STD;RSI"
-        ]
+        "allow_symbol_change": true,
+        "calendar": false,
+        "support_host": "https://www.tradingview.com"
       });
+
+      const wrapper = document.createElement('div');
+      wrapper.className = 'tradingview-widget-container';
+      wrapper.style.height = '100%';
+      wrapper.style.width = '100%';
+
+      const widgetChild = document.createElement('div');
+      widgetChild.className = 'tradingview-widget-container__widget';
+      widgetChild.style.height = '100%';
+      widgetChild.style.width = '100%';
+
+      wrapper.appendChild(widgetChild);
+      wrapper.appendChild(script);
+      container.appendChild(wrapper);
     }
 
     // 2. Technical Gauge Widget

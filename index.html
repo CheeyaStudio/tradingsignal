@@ -474,6 +474,7 @@
           <option value="OANDA:AUDUSD" data-base="AUD" data-quote="USD">AUD / USD (Dolar Aussie / Dolar AS)</option>
           <option value="OANDA:USDCAD" data-base="USD" data-quote="CAD">USD / CAD (Dolar AS / Dolar Kanada)</option>
           <option value="OANDA:XAUUSD" data-base="XAU" data-quote="USD">XAU / USD (Emas / Gold)</option>
+          <option value="BINANCE:BTCUSDT" data-base="BTC" data-quote="USD">🪙 BTC / USD (Bitcoin - Buka 24 Jam Nonstop)</option>
         </select>
 
         <select id="timeframeSelect" class="select-dropdown" onchange="onTimeframeChange()">
@@ -927,7 +928,8 @@
       "OANDA:USDJPY": { name: "USDJPY", decimals: 3, range: 1.150, slPips: 0.350, defaultPrice: 152.450, base: "USD", quote: "JPY" },
       "OANDA:AUDUSD": { name: "AUDUSD", decimals: 5, range: 0.00650, slPips: 0.00300, defaultPrice: 0.65800, base: "AUD", quote: "USD" },
       "OANDA:USDCAD": { name: "USDCAD", decimals: 5, range: 0.00700, slPips: 0.00300, defaultPrice: 1.38500, base: "USD", quote: "CAD" },
-      "OANDA:XAUUSD": { name: "XAUUSD", decimals: 2, range: 45.00, slPips: 10.00, defaultPrice: 3996.50, base: "XAU", quote: "USD" }
+      "OANDA:XAUUSD": { name: "XAUUSD", decimals: 2, range: 45.00, slPips: 10.00, defaultPrice: 3996.50, base: "XAU", quote: "USD" },
+      "BINANCE:BTCUSDT": { name: "BTCUSD", decimals: 2, range: 1800.0, slPips: 600.0, defaultPrice: 80550.0, base: "BTC", quote: "USD" }
     };
 
     // Initialize on load
@@ -961,7 +963,7 @@
 
       const weekendBanner = document.getElementById('weekendClosedBanner');
       if (weekendBanner) {
-        weekendBanner.style.display = isWeekend ? 'block' : 'none';
+        weekendBanner.style.display = (isWeekend && currentPair !== "BINANCE:BTCUSDT") ? 'block' : 'none';
       }
 
       // Sydney: 21:00 - 06:00 UTC
@@ -986,8 +988,10 @@
 
       const summary = document.getElementById('sessionSummaryStatus');
       if (summary) {
-        if (isWeekend) {
-          summary.innerHTML = `🛑 <strong>PASAR TUTUP TOTAL (LIBUR AKHIR PEKAN)</strong><br><span style="font-size:0.72rem; color:#94a3b8;">Buka kembali Senin subuh jam 05:00 WIB.</span>`;
+        if (currentPair === "BINANCE:BTCUSDT") {
+          summary.innerHTML = `🟢 <strong>PASAR CRYPTO BUKA 24 JAM SETIAP HARI</strong><br><span style="font-size:0.72rem; color:#4ade80;">Grafik dan harga sedang aktif bergerak detik demi detik!</span>`;
+        } else if (isWeekend) {
+          summary.innerHTML = `🛑 <strong>PASAR FOREX TUTUP TOTAL (LIBUR AKHIR PEKAN)</strong><br><span style="font-size:0.72rem; color:#94a3b8;">Buka kembali Senin subuh jam 05:00 WIB.</span>`;
         } else if (openSessions.length > 0) {
           summary.innerHTML = `🟢 Sedang Buka: <strong>${openSessions.join(' & ')}</strong> (Volume Baik)`;
         } else {
@@ -1013,7 +1017,16 @@
     async function fetchLivePrices() {
       const meta = PAIR_METAS[currentPair] || PAIR_METAS["OANDA:EURUSD"];
       try {
-        if (meta.base === "XAU") {
+        if (meta.base === "BTC") {
+          // Coinbase Spot Bitcoin API (24/7 Live)
+          const res = await fetch("https://api.coinbase.com/v2/prices/BTC-USD/spot");
+          if (res.ok) {
+            const data = await res.json();
+            if (data && data.data && data.data.amount) {
+              currentLivePrice = parseFloat(data.data.amount);
+            }
+          }
+        } else if (meta.base === "XAU") {
           // Gold API
           const res = await fetch("https://api.gold-api.com/price/XAU");
           if (res.ok) {

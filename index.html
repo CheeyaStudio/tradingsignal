@@ -1072,24 +1072,41 @@
       const sellSL = R1 + meta.slPips;
       const sellTP = S1;
 
-      // Populate Diagnosis
+      // 1. Populate Verdict Box
+      const verdictPair = document.getElementById('verdictPairText');
+      if (verdictPair) verdictPair.innerText = meta.name;
+
+      const verdictTitle = document.getElementById('finalVerdictTitle');
+      const verdictDesc = document.getElementById('finalVerdictDesc');
+      if (currentPair === "BINANCE:BTCUSDT") {
+        if (verdictTitle) verdictTitle.innerText = `🟢 KEPUTUSAN TEGAS: BITCOIN (BTC) AKTIF BUKA SEKARANG!`;
+        if (verdictDesc) verdictDesc.innerHTML = `Pasar Bitcoin beroperasi <strong>24 jam setiap hari (termasuk Minggu)</strong>. Tren saat ini Bullish, jadi fokus pasang antrean <strong>BUY LIMIT di Lantai Support</strong>.`;
+      } else {
+        if (verdictTitle) verdictTitle.innerText = `🟢 KEPUTUSAN TEGAS UNTUK ${meta.name}: FOKUS "BUY" SAJA!`;
+        if (verdictDesc) verdictDesc.innerHTML = `Karena tren besar <strong>${meta.name}</strong> sedang <strong>NAIK (BULLISH)</strong>, aturan emasnya adalah <strong>HANYA CARI PELUANG BUY</strong>. Pilihan SELL di bawah sengaja dimatikan agar kamu tidak bingung.`;
+      }
+
+      // 2. Populate Diagnosis Box
       document.getElementById('diagPair').innerText = meta.name;
       document.getElementById('diagLivePrice').innerText = p.toFixed(decimals);
       document.getElementById('diagR1').innerText = R1.toFixed(decimals);
       document.getElementById('diagS1').innerText = S1.toFixed(decimals);
 
-      // Populate Option 1 (Buy Limit)
+      // 3. Populate Option 1 (Buy Limit)
       document.getElementById('buyPlanEntry').innerText = buyEntry.toFixed(decimals);
       document.getElementById('buyPlanSL').innerText = buySL.toFixed(decimals);
       document.getElementById('buyPlanTP').innerText = buyTP.toFixed(decimals);
 
-      // Populate Option 2 (Sell Limit)
+      // 4. Populate Option 2 (Sell Limit)
       document.getElementById('sellPlanEntry').innerText = sellEntry.toFixed(decimals);
       document.getElementById('sellPlanSL').innerText = sellSL.toFixed(decimals);
       document.getElementById('sellPlanTP').innerText = sellTP.toFixed(decimals);
 
-      // Populate Step Guide
+      // 5. Populate Step Guide
       document.getElementById('stepPairName').innerText = meta.name;
+
+      // 6. Refresh weekend banner visibility
+      updateMarketSessions();
     }
 
 
@@ -1125,6 +1142,7 @@
       currentPair = pairSel.value;
       const meta = PAIR_METAS[currentPair] || PAIR_METAS["OANDA:EURUSD"];
       currentLivePrice = meta.defaultPrice;
+      updateMarketSessions();
       loadAllWidgets();
       fetchLivePrices();
     }
